@@ -78,10 +78,18 @@ def _parse_json(raw: str) -> dict[str, Any]:
     fence = re.fullmatch(r"```(?:json)?\s*(.*?)\s*```", cleaned, re.DOTALL)
     if fence:
         cleaned = fence.group(1)
+    if not cleaned.startswith("{"):
+        # tolerate preamble/postamble prose around the JSON object
+        start, end = cleaned.find("{"), cleaned.rfind("}")
+        if start != -1 and end > start:
+            cleaned = cleaned[start : end + 1]
     try:
         value = json.loads(cleaned)
     except json.JSONDecodeError as exc:
-        raise GenerationError(f"invalid JSON: {exc}") from exc
+        snippet = raw.strip()[:300].replace("\n", " ")
+        raise GenerationError(
+            f"invalid JSON: {exc}; claude said: {snippet!r}"
+        ) from exc
     if not isinstance(value, dict):
         raise GenerationError("generation output is not a JSON object")
     return value

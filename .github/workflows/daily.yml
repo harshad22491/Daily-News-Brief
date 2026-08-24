@@ -1,0 +1,53 @@
+name: Daily edition
+on:
+  schedule:
+    - cron: "45 1 * * *"   # ~07:15 IST start (GH jitter absorbs into ~07:30)
+    - cron: "15 2 * * *"   # ~07:45 IST backup — exits early if today already sent
+  workflow_dispatch:
+    inputs:
+      dryrun:
+        description: "Render but do not send (writes HTML artifacts)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: daily-edition
+  cancel-in-progress: false
+
+jobs:
+  build-and-send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+      SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
+      # Subscription auth. To switch Claude accounts: replace this one secret
+      # (run `claude setup-token` under the other account). To switch to API
+      # billing instead: set ANTHROPIC_API_KEY and clear CLAUDE_CODE_OAUTH_TOKEN.
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # To switch models: repo Settings → Variables → MODEL (e.g. opus | sonnet)
+      MODEL: ${{ vars.MODEL || 'opus' }}
+      RATE_BASE: ${{ vars.RATE_BASE }}   # Supabase edge function base URL
+      SENDER_EMAIL: ${{ vars.SENDER_EMAIL }}           # Brevo-verified sender
+      UNSUBSCRIBE_EMAIL: ${{ vars.SENDER_EMAIL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "20"}
+      - run: pip install -r requirements.txt
+      - run: npm install -g @anthropic-ai/claude-code
+      - name: Build and send (retries + partial-with-banner inside)
+        run: python -m pipeline.run --mode daily ${{ inputs.dryrun && '--dryrun' || '' }}
+      - name: Upload rendered editions
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editions-${{ github.run_id }}
+          path: work/**/*.html
+          if-no-files-found: ignore
+          retention-days: 14

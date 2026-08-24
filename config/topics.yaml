@@ -1,0 +1,19 @@
+topics: [finance, business, tech, politics]
+labels:
+  finance: Finance
+  business: Business
+  tech: Tech
+  politics: Politics
+selection:
+  per_topic: 5
+  briefly_noted_min: 3
+  briefly_noted_max: 5
+  exploration_share: 0.10   # slots given to low-history keywords so the list keeps learning
+dedup:
+  jaccard_threshold: 0.5
+window_hours: 24
+schedule:
+  send_time_ist: "08:00"
+  timezone: Asia/Kolkata
+followup:
+  rating_threshold: 4

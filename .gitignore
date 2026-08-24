@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.env
+work/
+state/
+*.msg
+exemplar*
+.venv/
+node_modules/

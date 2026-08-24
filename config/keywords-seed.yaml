@@ -1,0 +1,88 @@
+# Approved seed lists (plan review, 2026-08-24). 20 keywords per topic.
+# These seed keyword_weights at weight 1.0 on first run; after that the DB copy
+# is authoritative and evolves via ratings (bandit) + weekly critique.
+# Matching: case-insensitive, word-boundary. Multi-word phrases match as phrases.
+finance:
+  - RBI
+  - repo rate
+  - monetary policy
+  - inflation
+  - CPI
+  - GDP
+  - Sensex
+  - Nifty
+  - rupee
+  - bond yields
+  - fiscal deficit
+  - banking
+  - NBFC
+  - IPO
+  - mutual funds
+  - FII flows
+  - SEBI
+  - gold
+  - crude oil
+  - Federal Reserve
+business:
+  - merger
+  - acquisition
+  - quarterly results
+  - earnings
+  - startup
+  - funding round
+  - Reliance
+  - Adani
+  - Tata
+  - layoffs
+  - manufacturing
+  - PLI scheme
+  - exports
+  - FDI
+  - e-commerce
+  - aviation
+  - real estate
+  - auto sales
+  - FMCG
+  - capex
+tech:
+  - AI
+  - semiconductor
+  - chip
+  - data centre
+  - telecom
+  - spectrum
+  - cybersecurity
+  - fintech
+  - UPI
+  - digital payments
+  - cloud
+  - SaaS
+  - electric vehicle
+  - ISRO
+  - IT services
+  - TCS
+  - Infosys
+  - OpenAI
+  - Google
+  - data protection
+politics:
+  - Parliament
+  - Lok Sabha
+  - election
+  - BJP
+  - Congress
+  - Modi
+  - cabinet
+  - Supreme Court
+  - bill
+  - foreign policy
+  - China border
+  - Pakistan
+  - US tariffs
+  - trade deal
+  - sanctions
+  - Ukraine
+  - Middle East
+  - BRICS
+  - G20
+  - state assembly

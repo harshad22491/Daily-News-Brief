@@ -1,0 +1,5 @@
+[functions.rate]
+verify_jwt = false
+
+[functions.followup]
+verify_jwt = false

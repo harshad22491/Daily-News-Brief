@@ -1,0 +1,36 @@
+name: Weekly critique (RL pass)
+on:
+  schedule:
+    - cron: "30 3 * * 0"   # Sunday ~09:00 IST
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # the critique may commit an approved prompt diff + keywords.html
+
+jobs:
+  critique:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      MODEL: ${{ vars.MODEL || 'opus' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "20"}
+      - run: pip install -r requirements.txt
+      - run: npm install -g @anthropic-ai/claude-code
+      - name: Run critique, apply keyword changes, regenerate keywords.html
+        run: python -m pipeline.critique
+      - name: Commit prompt/keyword artifacts if changed
+        run: |
+          git config user.name "critique-bot"
+          git config user.email "actions@github.com"
+          git add prompts/ docs/keywords.html || true
+          git diff --cached --quiet || git commit -m "weekly critique: logged prompt/keyword update"
+          git push

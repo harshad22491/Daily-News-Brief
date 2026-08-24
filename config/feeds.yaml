@@ -1,0 +1,64 @@
+# Verified live 2026-08-24. Validate by XML parse, never HTTP status
+# (financialexpress.com returns HTTP 200 HTML for dead feed paths).
+# fetch: use plain HTTP client with a browser User-Agent.
+sources:
+  economic_times:
+    label: Economic Times
+    home: https://economictimes.indiatimes.com
+    weight: 1.0
+    feeds:
+      - {name: markets,  url: "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms", topic_hint: finance}
+      - {name: economy,  url: "https://economictimes.indiatimes.com/news/economy/rssfeeds/1373380680.cms", topic_hint: finance}
+      - {name: wealth,   url: "https://economictimes.indiatimes.com/wealth/rssfeeds/837555174.cms", topic_hint: finance}
+      - {name: industry, url: "https://economictimes.indiatimes.com/industry/rssfeeds/13352306.cms", topic_hint: business}
+      - {name: tech,     url: "https://economictimes.indiatimes.com/tech/rssfeeds/13357270.cms", topic_hint: tech}
+      - {name: politics, url: "https://economictimes.indiatimes.com/news/politics-and-nation/rssfeeds/1052732854.cms", topic_hint: politics}
+      - {name: top,      url: "https://economictimes.indiatimes.com/rssfeedstopstories.cms", topic_hint: null}
+  businessline:
+    label: The Hindu BusinessLine
+    home: https://www.thehindubusinessline.com
+    weight: 1.0
+    feeds:
+      - {name: markets,         url: "https://www.thehindubusinessline.com/markets/feeder/default.rss", topic_hint: finance}
+      - {name: economy,         url: "https://www.thehindubusinessline.com/economy/feeder/default.rss", topic_hint: finance}
+      - {name: money-banking,   url: "https://www.thehindubusinessline.com/money-and-banking/feeder/default.rss", topic_hint: finance}
+      - {name: companies,       url: "https://www.thehindubusinessline.com/companies/feeder/default.rss", topic_hint: business}
+      - {name: info-tech,       url: "https://www.thehindubusinessline.com/info-tech/feeder/default.rss", topic_hint: tech}
+      - {name: policy,          url: "https://www.thehindubusinessline.com/economy/policy/feeder/default.rss", topic_hint: politics}
+  mint:
+    label: Mint
+    home: https://www.livemint.com
+    weight: 1.0
+    feeds:
+      - {name: markets,    url: "https://www.livemint.com/rss/markets", topic_hint: finance}
+      - {name: economy,    url: "https://www.livemint.com/rss/economy", topic_hint: finance}
+      - {name: money,      url: "https://www.livemint.com/rss/money", topic_hint: finance}
+      - {name: companies,  url: "https://www.livemint.com/rss/companies", topic_hint: business}
+      - {name: industry,   url: "https://www.livemint.com/rss/industry", topic_hint: business}
+      - {name: technology, url: "https://www.livemint.com/rss/technology", topic_hint: tech}
+      - {name: ai,         url: "https://www.livemint.com/rss/AI", topic_hint: tech}
+      - {name: politics,   url: "https://www.livemint.com/rss/politics", topic_hint: politics}
+  times_of_india:
+    label: Times of India
+    home: https://timesofindia.indiatimes.com
+    weight: 0.9
+    feeds:
+      # numeric IDs are opaque; negative IDs are real — do not strip the minus sign
+      - {name: business, url: "https://timesofindia.indiatimes.com/rssfeeds/1898055.cms", topic_hint: business}
+      - {name: india,    url: "https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms", topic_hint: politics}
+      - {name: tech,     url: "https://timesofindia.indiatimes.com/rssfeeds/66949542.cms", topic_hint: tech}
+      - {name: world,    url: "https://timesofindia.indiatimes.com/rssfeeds/296589292.cms", topic_hint: politics}
+      - {name: top,      url: "https://timesofindia.indiatimes.com/rssfeeds/1221656.cms", topic_hint: null}
+  financial_express:
+    label: Financial Express
+    home: https://www.financialexpress.com
+    weight: 0.9
+    headline_only: true   # robots.txt disallows AI crawlers; never fetch article bodies
+    feeds:
+      - {name: news-sitemap, url: "https://www.financialexpress.com/news-sitemap.xml", topic_hint: null, type: news_sitemap}
+  indian_express:
+    label: Indian Express (Business)
+    home: https://indianexpress.com
+    weight: 0.8
+    feeds:
+      - {name: business, url: "https://indianexpress.com/section/business/feed/", topic_hint: business}

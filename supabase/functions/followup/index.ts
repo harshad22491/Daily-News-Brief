@@ -51,12 +51,17 @@ Deno.serve(async (request: Request): Promise<Response> => {
     },
   );
   if (!dispatchResponse.ok) return page("Could not start the deep dive", 502);
-  return page("On it — your deep dive lands in ~15 minutes.");
+  // supabase.co gateway rewrites text/html to text/plain — confirmation page
+  // lives on GitHub Pages instead.
+  return Response.redirect(`${pagesBase}/ontheway.html`, 302);
 });
 
+const pagesBase = Deno.env.get("PAGES_BASE") ??
+  "https://harshad22491.github.io/Daily-News-Brief";
+
 function page(content: string, status = 200): Response {
-  return new Response(
-    `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Daily News Briefing</title></head><body style="font-family:system-ui,sans-serif;max-width:520px;margin:60px auto;padding:0 20px;color:#202020"><h1>${content}</h1></body></html>`,
-    { status, headers: { "content-type": "text/html; charset=utf-8" } },
-  );
+  return new Response(content, {
+    status,
+    headers: { "content-type": "text/plain; charset=utf-8" },
+  });
 }

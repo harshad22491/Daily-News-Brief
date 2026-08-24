@@ -56,7 +56,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
   );
   if (!ratingResponse.ok) return page("Could not record rating", 500);
 
-  let followup = "";
+  let followupId = "";
   if (kind === "article" && score >= 4) {
     const id = crypto.randomUUID();
     const offerResponse = await fetch(`${supabaseUrl}/rest/v1/followup_requests`, {
@@ -70,16 +70,25 @@ Deno.serve(async (request: Request): Promise<Response> => {
         created_at: new Date().toISOString(),
       }),
     });
-    if (offerResponse.ok) {
-      followup = `<p><a href="/functions/v1/followup?req=${encodeURIComponent(id)}&go=1">Yes — send me a deep dive</a></p><p>No thanks</p>`;
-    }
+    if (offerResponse.ok) followupId = id;
   }
-  return page(`Thanks — recorded ${"⭐".repeat(score)}${followup}`);
+  // The supabase.co gateway rewrites text/html to text/plain (anti-phishing),
+  // so the thanks page lives on GitHub Pages and we redirect to it.
+  const target = new URL(`${pagesBase}/thanks.html`);
+  target.searchParams.set("s", String(score));
+  if (followupId) {
+    target.searchParams.set("req", followupId);
+    target.searchParams.set("fn", `${supabaseUrl}/functions/v1/followup`);
+  }
+  return Response.redirect(target.toString(), 302);
 });
 
+const pagesBase = Deno.env.get("PAGES_BASE") ??
+  "https://harshad22491.github.io/Daily-News-Brief";
+
 function page(content: string, status = 200): Response {
-  return new Response(
-    `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Daily News Briefing</title></head><body style="font-family:system-ui,sans-serif;max-width:520px;margin:60px auto;padding:0 20px;color:#202020"><h1>${content}</h1></body></html>`,
-    { status, headers: { "content-type": "text/html; charset=utf-8" } },
-  );
+  return new Response(content, {
+    status,
+    headers: { "content-type": "text/plain; charset=utf-8" },
+  });
 }

@@ -37,8 +37,14 @@ def send(
         payload["scheduledAt"] = send_at.isoformat()
 
     store = Store()
+    # Follow-up (force_immediate) sends get a distinct log key so they never
+    # collide with the daily edition's (date, recipient) row — that row is the
+    # already-sent guard, and a deep-dive must not mark the day as delivered.
+    log_date = current.date().isoformat()
+    if force_immediate:
+        log_date = f"{log_date}#followup#{current.strftime('%H%M%S')}"
     log_base = {
-        "date": current.date().isoformat(),
+        "date": log_date,
         "recipient": recipient_id,
         "message_id": "",
     }

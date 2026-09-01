@@ -12,9 +12,13 @@ a weekly Claude critique pass proposes logged, reversible prompt and keyword
 changes. Rating an article 4★+ offers an on-demand deep-dive follow-up email.
 
 ## Architecture
-- **GitHub Actions** — daily generation (cron ~07:15 IST + backup), follow-up
-  jobs, Sunday critique. Writing is done by Claude via the Claude Code CLI on a
-  subscription OAuth token (or an API key).
+- **GitHub Actions** — daily generation, follow-up jobs, Sunday critique.
+  Writing is done by Claude via the Claude Code CLI on a subscription OAuth
+  token (or an API key). The daily workflow is fired at 07:15 IST (backup
+  07:55) by an **external scheduler** (cron-job.org) calling GitHub's
+  `workflow_dispatch` API — see `trigger/`. GitHub's own `schedule` cron was
+  dropped on 01-Sep-2026 because it ran 1–12 hours late; the trigger needs a
+  fine-grained PAT (repo-scoped, Actions: read/write, ≤1-year expiry).
 - **Supabase** — Postgres for articles, issues, ratings, keyword weights,
   follow-up requests; Edge Functions serve the rating and consent links.
 - **Brevo** — transactional email delivery, scheduled for 08:00 IST.

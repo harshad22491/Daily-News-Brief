@@ -39,8 +39,23 @@
 | **Recipients** | Insert/deactivate rows in `recipients` (Supabase). |
 
 ## Daily operation
-- 07:15 IST cron builds; email is scheduled to land at 08:00 IST via Brevo's
-  `scheduledAt`. A 07:45 backup cron re-runs only if nothing was sent.
+- 07:15 IST: cron-job.org (Harshad's account, job "Daily-News-Brief") POSTs to
+  `https://api.github.com/repos/harshad22491/Daily-News-Brief/actions/workflows/daily.yml/dispatches`
+  with `Authorization: Bearer <PAT>`, `Accept: application/vnd.github+json`,
+  body `{"ref":"main"}`. The build takes ~15–25 min; the email is scheduled to
+  land at 08:00 IST via Brevo's `scheduledAt` (sent immediately if the build
+  finishes after 08:00). A second cron-job.org job at 07:55 IST is the backup —
+  the run exits early if today is already sent. GitHub's `schedule:` cron was
+  removed on 01-Sep-2026 (it fired 1–12 h late; `trigger/` has cron/Task
+  Scheduler equivalents if cron-job.org is ever dropped).
+- **Trigger auth**: fine-grained GitHub PAT, repository access limited to this
+  repo (and bulk-deals-mailer, which shares it), permission Actions:
+  read/write, 1-year expiry — **rotate before it lapses** (cron-job.org starts
+  reporting 401). Job URL must be `https://` (http → 301, counted as failure);
+  leave "treat redirects as success" off.
+- **Missing edition**: (1) check harshad422@gmail.com for a cron-job.org
+  failure notice; (2) Actions tab — no run for the day = trigger/PAT problem,
+  a run exists = read its log. Recover with `gh workflow run daily.yml`.
 - **Failure policy**: generation retries twice; a degraded edition
   (headline+snippet, no essay) plus a banner listing what's missing is sent
   rather than skipping the day. Check the Actions run log + `send_log` table.

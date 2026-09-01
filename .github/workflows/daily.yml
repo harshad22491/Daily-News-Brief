@@ -1,8 +1,13 @@
 name: Daily edition
+# Triggered at 07:15 IST (backup 07:55 IST) by an EXTERNAL scheduler — cron-job.org —
+# calling GitHub's workflow_dispatch REST API; see trigger/ for equivalent cron /
+# Task Scheduler callers. GitHub's own `schedule:` cron was dropped on 01-Sep-2026:
+# it fired 1–12 h late every day that week (editions landed 08:36–19:13 IST instead
+# of 08:00). Dispatched runs start within seconds. Being dispatch-only also exempts
+# this workflow from GitHub's 60-day inactivity auto-disable.
+# The backup dispatch is safe: pipeline.run exits early once today's editions are
+# logged as sent/scheduled, and `concurrency` below serialises overlapping runs.
 on:
-  schedule:
-    - cron: "45 1 * * *"   # ~07:15 IST start (GH jitter absorbs into ~07:30)
-    - cron: "15 2 * * *"   # ~07:45 IST backup — exits early if today already sent
   workflow_dispatch:
     inputs:
       dryrun:

@@ -1,0 +1,16 @@
+name: Copy approved Radar subscription credential
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Copy subscription token directly between encrypted secrets
+        env:
+          GH_TOKEN: ${{ secrets.RADAR_DISPATCH_TOKEN }}
+          RADAR_CLAUDE_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          test -n "$RADAR_CLAUDE_TOKEN"
+          printf '%s' "$RADAR_CLAUDE_TOKEN" | gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo harshad22491/AI-Product-Radar

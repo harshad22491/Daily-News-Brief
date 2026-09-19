@@ -56,3 +56,16 @@ jobs:
           path: work/**/*.html
           if-no-files-found: ignore
           retention-days: 14
+
+  # Independent of briefing generation: reuse its external primary/backup triggers.
+  radar-dispatch:
+    if: ${{ !inputs.dryrun }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Start both Radar editions
+        env:
+          GH_TOKEN: ${{ secrets.RADAR_DISPATCH_TOKEN }}
+        run: gh workflow run daily.yml --repo harshad22491/AI-Product-Radar

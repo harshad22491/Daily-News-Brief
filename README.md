@@ -22,7 +22,9 @@ changes. Rating an article 4★+ offers an on-demand deep-dive follow-up email.
 - **Supabase** — Postgres for articles, issues, ratings, keyword weights,
   follow-up requests; Edge Functions serve the rating and consent links.
 - **Brevo** — transactional email delivery, scheduled for 08:00 IST.
-- **ScraperAPI** — fallback article-text fetcher, hard-capped at 30 credits/day.
+- **ScraperAPI** — fallback article-text fetcher, capped at 30 calls/day, 400/month,
+  and blocked entirely once the plan balance falls to 100 credits (that key is shared
+  with the bulk-deals mailer).
 
 `SPEC.md` holds the module contracts; `docs/runbook.md` holds setup and
 operations (switching Claude accounts/models, secrets, failure policy).

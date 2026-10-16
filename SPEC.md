@@ -74,8 +74,18 @@ overall by score. Deterministic given rng_seed (use date+recipient).
 1. skip if premium or source headline_only;
 2. direct `http_get` + `trafilatura.extract` (≥400 chars = success);
 3. else ScraperAPI if env `SCRAPERAPI_KEY`: `http://api.scraperapi.com?api_key=..&url=..`
-   — budget: read+update a daily counter in store (`send_log` table, date row
-   `scraperapi:{date}`), hard cap 30/day;
+   — budget, all three must pass before a call is made:
+   a. daily counter in store (`send_log`, date row `scraperapi:{date}`), cap 30/day
+      (`SCRAPERAPI_DAILY_CAP`);
+   b. monthly counter (`send_log`, date row `scraperapi:{YYYY-MM}`), cap 400/month
+      (`SCRAPERAPI_MONTHLY_CAP`) — the daily cap alone bounds one edition, not a
+      billing cycle, and it counts requests while ScraperAPI bills credits;
+   c. plan balance from `https://api.scraperapi.com/account` (`requestLimit -
+      requestCount`, fetched once per run, cached in `_plan`) must stay above
+      `SCRAPERAPI_MIN_REMAINING` (100) — the only check that sees real credit
+      costs and the spend of the bulk-deals mailer sharing this key. An
+      unreachable account endpoint fails open; a and b still hold.
+   Both counters increment on dispatch, not on success;
 4. else keep snippet. Truncate full_text to 2500 chars.
 
 ### generate.py

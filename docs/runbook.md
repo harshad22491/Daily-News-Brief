@@ -22,6 +22,9 @@
 6. **GitHub repo settings**:
    - Secrets: `CLAUDE_CODE_OAUTH_TOKEN`, `BREVO_API_KEY`, `SUPABASE_URL`,
      `SUPABASE_SERVICE_KEY`, `SCRAPERAPI_KEY` (optional: `ANTHROPIC_API_KEY`)
+   - Optional variables to retune the ScraperAPI budget: `SCRAPERAPI_DAILY_CAP`
+     (30), `SCRAPERAPI_MONTHLY_CAP` (400), `SCRAPERAPI_MIN_REMAINING` (100).
+     Raise the last one if the bulk-deals mailer starts competing for the pool.
    - Variables: `MODEL` (default `opus`), `RATE_BASE`
      (= `https://<project-ref>.functions.supabase.co`), and `SENDER_EMAIL`
      (= `harshad422@gmail.com`, the Brevo-verified sender — kept out of the

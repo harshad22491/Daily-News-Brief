@@ -28,6 +28,9 @@ jobs:
       SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
       BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
       SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
+      SCRAPERAPI_DAILY_CAP: ${{ vars.SCRAPERAPI_DAILY_CAP }}
+      SCRAPERAPI_MONTHLY_CAP: ${{ vars.SCRAPERAPI_MONTHLY_CAP }}
+      SCRAPERAPI_MIN_REMAINING: ${{ vars.SCRAPERAPI_MIN_REMAINING }}
       # Subscription auth. To switch Claude accounts: replace this one secret
       # (run `claude setup-token` under the other account). To switch to API
       # billing instead: set ANTHROPIC_API_KEY and clear CLAUDE_CODE_OAUTH_TOKEN.
